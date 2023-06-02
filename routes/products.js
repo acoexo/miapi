@@ -1,6 +1,10 @@
 var express = require('express');
 const router=express.Router();
-const productServices=require('../services/servicesProducts')
+const productServices=require('../services/servicesProducts');
+const {validatorHandler}=require('../middleware/validator.handler');
+const {schemaProductGet, schemaProductCreate, schemaProductUpdate}=require('../schema/productosSchema');
+
+
 router.get('/',async function(req, res, next){
     try {
         const products =await productServices.getAllProducts(req, res);
@@ -8,8 +12,8 @@ router.get('/',async function(req, res, next){
     } catch (error) {
         next(error);
     }
-})
-router.get('/:id',async function(req, res, next){
+});
+router.get('/:id',validatorHandler(schemaProductGet,'params'),async function(req, res, next){
     try {
         const oneProduct= await productServices.getOneProduct(req,res);
         return (oneProduct);
@@ -17,8 +21,8 @@ router.get('/:id',async function(req, res, next){
         next(error);
     }
     
-})
-router.post('/',async function(req, res, next){
+});
+router.post('/',validatorHandler(schemaProductCreate, 'body'),async function(req, res, next){
     try {
         const newProduct= await productServices.createNewProduct(req,res);
         return newProduct;
@@ -26,8 +30,8 @@ router.post('/',async function(req, res, next){
         next(error);
     }
   
-})
-router.delete('/:id',async function(req, res, next){
+});
+router.delete('/:id',validatorHandler(schemaProductGet, 'params'),async function(req, res, next){
     try {
         const deleteProduct =await  productServices.deleteProduct(req, res);
         return deleteProduct;
@@ -35,8 +39,8 @@ router.delete('/:id',async function(req, res, next){
         next(error);
     }
     
-}) 
-router.patch('/:id',async function(req, res, next){
+}) ;
+router.patch('/:id',validatorHandler(schemaProductUpdate, 'params'),async function(req, res, next){
     try {
         const updateProduct = await productServices.updateProduct(req, res);
         return updateProduct;
@@ -44,5 +48,5 @@ router.patch('/:id',async function(req, res, next){
         next(error);
     }
    
-})
+});
 module.exports=router;
